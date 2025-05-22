@@ -12,16 +12,17 @@ body {
 
 .memify-header {
   position: relative;
-  height: 80px;
+  height: 120px;
   margin-bottom: 40px;
   padding: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
 }
 
 .memify-header img {
   position: absolute;
-  top: -50px;
-  left: 10px;
+  top: -40px;
+  left: 30px;
   width: 180px; /* Adjust based on your logo size */
   height: auto;
 }
@@ -29,7 +30,9 @@ body {
 .template-type-box {
   max-width: 1200px;
   margin: 20px auto;
+  margin-top: 0px;
   padding: 0 20px;
+  padding-top: 0px;
   display: flex;
   justify-content:center;
   align-items: center;
@@ -89,7 +92,8 @@ body {
 }
 
 .upload-box:hover{
-    transform: scale(1.1);
+    transform: scale(1.05);
+    cursor: pointer;
 }
 
 .upload-box p {
@@ -104,6 +108,7 @@ body {
 }
 
 .upload-icon:hover {
+    
   opacity: 0.8;
 }
 
@@ -129,21 +134,28 @@ body {
 }
 
 .more-button {
-  display: block;
+  display: flex;
+  gap: 10px;
   margin: 20px auto;
   padding: 10px 20px;
-  background-color: #007bff;
+  background-color: orange;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
-  color: #fff;
+  color: black;
 }
+
 
 .more-button p {
   margin: 0;
 }
 
+.more-button img{
+    width: 15px;
+    height: auto;
+}
+
 .more-button:hover {
-  background-color: #0056b3;
+  background-color: orangered;
 }
