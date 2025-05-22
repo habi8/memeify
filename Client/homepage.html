@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Memeify Homepage</title>
-    <link rel="stylesheet" href="CSS/homepage.css">
+    <link rel="stylesheet" href="/CSS/homepage.css">
 </head>
 <body>
     <div class="memify-header">
-        <img src="Static/memeify-wbg.png">
+        <img src="/Static/memeify-wbg.png">
     </div>
     <div class="template-type-box" >
         <form id="search-form" class="search-container">
@@ -19,20 +19,22 @@
             aria-label="Search for meme templates"
             >
              <button type="submit" class="search-button" aria-label="Search">
-             <img src="Static/search.png" alt="Search icon" class="search-icon">
+             <img src="/Static/search.png" alt="Search icon" class="search-icon">
             </button>
         </form>
         <div class="upload-box">
             <p>You can upload your own template</p>
-            <img src="Static/upload.png" alt="Upload icon" class="upload-icon">
+            <img src="/Static/upload.png" alt="Upload icon" class="upload-icon">
         </div>
     </div>
 
     <div class="template-grid">
-
+        <!-- Populated with injected templates -->
     </div>
     <button class="more-button">
-        <p>more</p>
+        <p>More</p>
     </button>
+    <script src="/JS/templates.js"></script>
+    <script src="/JS/main.js"></script>
 </body>
 </html>

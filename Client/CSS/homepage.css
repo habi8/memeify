@@ -106,3 +106,44 @@ body {
 .upload-icon:hover {
   opacity: 0.8;
 }
+
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 0 20px;
+}
+
+.template-img {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.template-img:hover {
+  transform: scale(1.05);
+}
+
+.more-button {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #fff;
+}
+
+.more-button p {
+  margin: 0;
+}
+
+.more-button:hover {
+  background-color: #0056b3;
+}
