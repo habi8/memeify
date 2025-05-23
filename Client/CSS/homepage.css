@@ -112,9 +112,10 @@ body {
   opacity: 0.8;
 }
 
+/* Template grid */
 .template-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(5, 1fr); /* 5 columns */
   gap: 20px;
   max-width: 1200px;
   margin: 20px auto;
@@ -132,7 +133,6 @@ body {
 .template-img:hover {
   transform: scale(1.05);
 }
-
 .more-button {
   display: flex;
   gap: 10px;

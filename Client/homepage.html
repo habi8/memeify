@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Memeify Homepage</title>
+    <title>Memify Homepage</title>
     <link rel="stylesheet" href="/CSS/homepage.css">
 </head>
 <body>
     <div class="memify-header">
-        <img src="/Static/header.png">
+        <img src="/Static/header.png" alt="Memify Logo" class="logo">
     </div>
-    <div class="template-type-box" >
+    <div class="template-type-box">
         <form id="search-form" class="search-container">
             <input 
-            type="text" 
-            id="search-input" 
-            placeholder="Search meme templates..." 
-            aria-label="Search for meme templates"
+                type="text" 
+                id="search-input" 
+                placeholder="Search meme templates..." 
+                aria-label="Search for meme templates"
             >
-             <button type="submit" class="search-button" aria-label="Search">
-             <img src="/Static/search.png" alt="Search icon" class="search-icon">
+            <button type="submit" class="search-button" aria-label="Search">
+                <img src="/Static/search.png" alt="Search icon" class="search-icon">
             </button>
         </form>
         <div class="upload-box">
@@ -27,15 +27,13 @@
             <img src="/Static/upload.png" alt="Upload icon" class="upload-icon">
         </div>
     </div>
-
     <div class="template-grid">
-        <!-- Populated with injected templates -->
+        <!-- Templates populated by templates.js -->
     </div>
     <button class="more-button">
         <p>More</p>
-        <img src="/Static/more.png">
     </button>
+    <!-- <script src="Client/js/main.js"></script> -->
     <script src="/JS/templates.js"></script>
-    <script src="/JS/main.js"></script>
 </body>
 </html>
