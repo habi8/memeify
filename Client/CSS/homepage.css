@@ -4,6 +4,13 @@
   box-sizing: border-box;
 }
 
+@font-face {
+  font-family: 'BubblegumSans';
+  src: url('/Fonts/BubblegumSans-Regular.ttf') format('truetype');
+}
+
+
+
 body {
   font-family: sans-serif;
   background-color: #f5f5f5;
@@ -112,6 +119,17 @@ body {
   opacity: 0.8;
 }
 
+.popular-templates{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px;
+    margin-left: 160px;
+    height: 40px;
+    width: 1160px;
+    
+    background-color: rgb(255, 227, 175);
+}
 /* Template grid */
 .template-grid {
   display: grid;
@@ -158,4 +176,24 @@ body {
 
 .more-button:hover {
   background-color: orangered;
+}
+
+/* Add to Client/CSS/homepage.css */
+.more-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+#clear-templates {
+  padding: 10px 20px;
+  background-color: #b85f17;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #fff;
+}
+
+#clear-templates:hover {
+  background-color: #861e09;
 }

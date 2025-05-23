@@ -2,9 +2,11 @@
 const express = require('express');
 const axios = require('axios');
 const router = express.Router();
-const { getHomepage } = require('../Controllers/homepageController');
+const { getHomepage,getMoretemplates, searchTemplates } = require('../Controllers/homepageController');
 
 router.get('/', getHomepage);
+router.get('/api/moreTemplates', getMoretemplates);
+router.get('/api/searchTemplates', searchTemplates);
 
 // Fetch additional templates (for pagination and search)
 // router.get('/templates', async (req, res) => {

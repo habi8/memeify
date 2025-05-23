@@ -7,7 +7,9 @@ const homepageRoutes = require('./Routes/homepageRoutes');
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:7000' // Allow requests from this origin
+}));
 app.use(express.static(path.join(__dirname, '../Client')));
 app.use(express.json());
 

@@ -2,52 +2,107 @@
 document.addEventListener('DOMContentLoaded', () => {
   const templateGrid = document.querySelector('.template-grid');
   const moreButton = document.querySelector('.more-button');
+  const moreButtonText = moreButton.querySelector('p'); // Target the <p> tag
   const searchForm = document.getElementById('search-form');
   const searchInput = document.getElementById('search-input');
-  let templates = window.memeTemplates || []; // Fallback to empty array if undefined
-  let visibleRows = 3; // Start with 3 rows (15 templates)
-  const templatesPerRow = 5;
-  const maxRows = 6; // Max 6 rows (3 initial + 3 more)
+  const clearButton = document.getElementById('clear-templates');
 
-  // If no templates are injected, fetch them (optional fallback)
-  if (!templates.length) {
-    fetchTemplates();
+  let templates = JSON.parse(localStorage.getItem('memifyTemplates')) || window.memeTemplates || [];
+  let page = Math.ceil((templates.length + 1) / 10) || 1;
+  let hasMore = true;
+
+  if (templates.length > 0) {
+    displayTemplates(templates);
   } else {
-    displayTemplates(templates.slice(0, visibleRows * templatesPerRow));
+    templateGrid.innerHTML = '<p>No templates available. Check console for errors.</p>';
+    console.error('memeTemplates is empty or undefined');
   }
 
-  // More button click
-  moreButton.addEventListener('click', () => {
-    visibleRows += 3; // Add 3 more rows
-    templateGrid.innerHTML = ''; // Clear grid
-    displayTemplates(templates.slice(0, visibleRows * templatesPerRow));
-    if (visibleRows >= maxRows || visibleRows * templatesPerRow >= templates.length) {
-      moreButton.style.display = 'none';
+  moreButton.addEventListener('click', async () => {
+    if (!hasMore) return;
+
+    page++;
+    try {
+      const response = await fetch(`http://localhost:7000/memeify/api/moreTemplates?page=${page}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Response is not JSON');
+      }
+      const data = await response.json();
+      if (data.success) {
+        templates = [...templates, ...data.templates];
+        localStorage.setItem('memifyTemplates', JSON.stringify(templates));
+        templateGrid.innerHTML = '';
+        displayTemplates(templates);
+        hasMore = data.hasMore;
+        if (!hasMore) {
+          moreButtonText.textContent = 'No More Templates'; // Update only the text
+          moreButton.disabled = true;
+        }
+      } else {
+        console.error('Failed to fetch more templates:', data.error);
+        templateGrid.innerHTML = '<p>Error loading more templates</p>';
+      }
+    } catch (error) {
+      console.error('Error fetching more templates:', error.message);
+      templateGrid.innerHTML = '<p>Error loading more templates. Check console for details.</p>';
     }
   });
 
-  // Search form submission
-  searchForm.addEventListener('submit', (e) => {
+  searchForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const query = searchInput.value.trim().toLowerCase();
-    templateGrid.innerHTML = ''; // Clear grid
-    visibleRows = 3; // Reset to 3 rows
-    moreButton.style.display = 'block';
-    const filteredTemplates = query
-      ? templates.filter(template => template.name.toLowerCase().includes(query))
-      : templates;
-    displayTemplates(filteredTemplates.slice(0, visibleRows * templatesPerRow));
-    if (filteredTemplates.length <= visibleRows * templatesPerRow) {
-      moreButton.style.display = 'none';
-    }
-  });
+    const query = searchInput.value.trim();
+    templateGrid.innerHTML = '';
 
-  // Display templates in grid
-  function displayTemplates(templatesToShow) {
-    if (!templatesToShow.length) {
-      templateGrid.innerHTML = '<p>No templates available</p>';
+    if (!query) {
+      isSearching = false;
+      displayTemplates(templates); // Show all fetched templates if query is empty
       return;
     }
+
+    try {
+      isSearching = true;
+      const response = await fetch(`http://localhost:7000/memeify/api/searchTemplates?query=${encodeURIComponent(query)}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Response is not JSON');
+      }
+      const data = await response.json();
+      if (data.success) {
+        displayTemplates(data.templates); // Display search results
+      } else {
+        console.error('Failed to search templates:', data.error);
+        templateGrid.innerHTML = '<p>Error searching templates</p>';
+      }
+    } catch (error) {
+      console.error('Error searching templates:', error.message);
+      templateGrid.innerHTML = '<p>Error searching templates. Check console for details.</p>';
+    }
+  });
+
+  clearButton.addEventListener('click', () => {
+    localStorage.removeItem('memifyTemplates');
+    templates = window.memeTemplates || [];
+    page = 1;
+    hasMore = true;
+    templateGrid.innerHTML = '';
+    displayTemplates(templates);
+    moreButtonText.textContent = 'More'; // Update only the <p> tag
+    moreButton.disabled = false;
+  });
+
+  function displayTemplates(templatesToShow) {
+    if (!templatesToShow.length) {
+      templateGrid.innerHTML = '<p>No templates found</p>';
+      return;
+    }
+    templateGrid.innerHTML = '';
     templatesToShow.forEach(template => {
       const img = document.createElement('img');
       img.src = template.url;
@@ -58,20 +113,5 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       templateGrid.appendChild(img);
     });
-  }
-
-  // Fallback function to fetch templates if not injected
-  async function fetchTemplates() {
-    try {
-      const response = await fetch('/api/templates'); // Optional fallback endpoint
-      const data = await response.json();
-      if (data.success) {
-        templates = data.templates.slice(0, 20); // Limit to 20
-        displayTemplates(templates.slice(0, visibleRows * templatesPerRow));
-      }
-    } catch (error) {
-      console.error('Error fetching templates:', error);
-      templateGrid.innerHTML = '<p>Error loading templates</p>';
-    }
   }
 });
