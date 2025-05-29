@@ -100,7 +100,7 @@
 
 
 /* Style for delete button on the left */
-.delete-button {
+/* .delete-button {
   position: absolute;
   top: 300px;
   left: 100px;
@@ -111,6 +111,15 @@
   border-radius: 5px;
   font-weight: bold;
   z-index: 10;
+  cursor: pointer;
+} */
+
+.delete-button,
+.increase-button,
+.decrease-button {
+  padding: 5px 10px;
+  margin-top: 10px;
+  font-size: 16px;
   cursor: pointer;
 }
 

@@ -112,31 +112,62 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function toggleDeleteButton(show) {
-    let deleteBtn = document.querySelector('.delete-button');
+  let deleteBtn = document.querySelector('.delete-button');
+  let increaseBtn = document.querySelector('.increase-button');
+  let decreaseBtn = document.querySelector('.decrease-button');
 
-    if (show && !deleteBtn) {
-      deleteBtn = document.createElement('button');
-      deleteBtn.className = 'delete-button';
-      deleteBtn.innerHTML = 'Delete';
+  if (show && !deleteBtn) {
+    // Delete Button
+    deleteBtn = document.createElement('button');
+    deleteBtn.className = 'delete-button';
+    deleteBtn.innerHTML = 'Delete';
+    editorContainer.appendChild(deleteBtn);
 
-      deleteBtn.addEventListener('click', () => {
-        if (selectedTextObj) {
-          const index = texts.indexOf(selectedTextObj);
-          if (index !== -1) {
-            texts.splice(index, 1);
-            drawMeme();
-          }
+    // Increase Font Size Button
+    increaseBtn = document.createElement('button');
+    increaseBtn.className = 'increase-button';
+    increaseBtn.innerHTML = '+';
+    increaseBtn.style.marginLeft = '10px';
+    editorContainer.appendChild(increaseBtn);
 
-          selectedTextObj = null;
-          toggleDeleteButton(false);
+    // Decrease Font Size Button
+    decreaseBtn = document.createElement('button');
+    decreaseBtn.className = 'decrease-button';
+    decreaseBtn.innerHTML = '−';
+    decreaseBtn.style.marginLeft = '5px';
+    editorContainer.appendChild(decreaseBtn);
+
+    deleteBtn.addEventListener('click', () => {
+      if (selectedTextObj) {
+        const index = texts.indexOf(selectedTextObj);
+        if (index !== -1) {
+          texts.splice(index, 1);
+          drawMeme();
         }
-      });
+        selectedTextObj = null;
+        toggleDeleteButton(false);
+      }
+    });
 
-      editorContainer.appendChild(deleteBtn);
-    } else if (!show && deleteBtn) {
-      deleteBtn.remove();
-    }
+    increaseBtn.addEventListener('click', () => {
+      if (selectedTextObj) {
+        selectedTextObj.size += 2;
+        drawMeme();
+      }
+    });
+
+    decreaseBtn.addEventListener('click', () => {
+      if (selectedTextObj && selectedTextObj.size > 10) {
+        selectedTextObj.size -= 2;
+        drawMeme();
+      }
+    });
+  } else if (!show && deleteBtn) {
+    deleteBtn.remove();
+    if (increaseBtn) increaseBtn.remove();
+    if (decreaseBtn) decreaseBtn.remove();
   }
+}
 
   function drawMeme() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -168,3 +199,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+
