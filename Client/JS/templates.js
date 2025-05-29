@@ -21,24 +21,23 @@ document.addEventListener('DOMContentLoaded', () => {
     console.error('memeTemplates is empty or undefined');
   }
 
-  // Trigger file input when upload icon is clicked
+  
   uploadIcon.addEventListener('click', () => {
     uploadInput.click(); // Programmatically click the hidden file input
   });
 
-  // Handle file selection
+
   uploadInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Create a URL for the selected file to preview or pass to editor
+      
       const fileUrl = URL.createObjectURL(file);
       console.log('Selected file URL:', fileUrl);
 
-      // Redirect to editor with the selected file URL
+     
       window.location.href = `/memeify/api/editorPage?template=${encodeURIComponent(fileUrl)}&isLocal=true`;
 
-      // Optionally revoke the URL after use to free memory
-      // URL.revokeObjectURL(fileUrl); // Uncomment if you don't need the URL after redirect
+      
     }
   });
 

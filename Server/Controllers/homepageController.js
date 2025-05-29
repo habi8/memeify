@@ -47,7 +47,7 @@ const getMoretemplates =  async (req, res) => {
     const { page = 1 } = req.query; // Page number for pagination
     const limit = 10; // Fetch 10 templates per request
 
-    // Fetch all templates from Imgflip API
+    
     const response = await axios.get('https://api.imgflip.com/get_memes');
     if (!response.data.success) {
       throw new Error('Imgflip API request failed');

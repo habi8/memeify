@@ -1,4 +1,4 @@
-// server/App.js
+
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -8,7 +8,7 @@ const homepageRoutes = require('./Routes/homepageRoutes');
 const app = express();
 
 app.use(cors({
-  origin: 'http://localhost:7000' // Allow requests from this origin
+  origin: 'http://localhost:7000' 
 }));
 app.use(express.static(path.join(__dirname, '../Client')));
 app.use(express.json());

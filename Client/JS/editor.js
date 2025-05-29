@@ -117,20 +117,20 @@ document.addEventListener('DOMContentLoaded', () => {
   let decreaseBtn = document.querySelector('.decrease-button');
 
   if (show && !deleteBtn) {
-    // Delete Button
+    
     deleteBtn = document.createElement('button');
     deleteBtn.className = 'delete-button';
     deleteBtn.innerHTML = 'Delete';
     editorContainer.appendChild(deleteBtn);
 
-    // Increase Font Size Button
+    
     increaseBtn = document.createElement('button');
     increaseBtn.className = 'increase-button';
     increaseBtn.innerHTML = '+';
     increaseBtn.style.marginLeft = '10px';
     editorContainer.appendChild(increaseBtn);
 
-    // Decrease Font Size Button
+    
     decreaseBtn = document.createElement('button');
     decreaseBtn.className = 'decrease-button';
     decreaseBtn.innerHTML = '−';
