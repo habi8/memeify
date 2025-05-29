@@ -12,7 +12,6 @@ app.use(cors({
 }));
 app.use(express.static(path.join(__dirname, '../Client')));
 app.use(express.json());
-
 app.use('/memeify', homepageRoutes);
 
 const PORT = 7000;

@@ -2,24 +2,48 @@
 document.addEventListener('DOMContentLoaded', () => {
   const templateGrid = document.querySelector('.template-grid');
   const moreButton = document.querySelector('.more-button');
-  const moreButtonText = moreButton.querySelector('p'); // Target the <p> tag
+  const moreButtonText = moreButton.querySelector('p');
   const searchForm = document.getElementById('search-form');
   const searchInput = document.getElementById('search-input');
   const clearButton = document.getElementById('clear-templates');
+  const uploadIcon = document.querySelector('.upload-icon');
+  const uploadInput = document.getElementById('upload-input');
 
   let templates = JSON.parse(localStorage.getItem('memifyTemplates')) || window.memeTemplates || [];
   let page = Math.ceil((templates.length + 1) / 10) || 1;
   let hasMore = true;
+  let isSearching = false;
 
-  if (templates.length > 0) {
+  if (templates.length > 0 && !isSearching) {
     displayTemplates(templates);
   } else {
     templateGrid.innerHTML = '<p>No templates available. Check console for errors.</p>';
     console.error('memeTemplates is empty or undefined');
   }
 
+  // Trigger file input when upload icon is clicked
+  uploadIcon.addEventListener('click', () => {
+    uploadInput.click(); // Programmatically click the hidden file input
+  });
+
+  // Handle file selection
+  uploadInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Create a URL for the selected file to preview or pass to editor
+      const fileUrl = URL.createObjectURL(file);
+      console.log('Selected file URL:', fileUrl);
+
+      // Redirect to editor with the selected file URL
+      window.location.href = `/memeify/api/editorPage?template=${encodeURIComponent(fileUrl)}&isLocal=true`;
+
+      // Optionally revoke the URL after use to free memory
+      // URL.revokeObjectURL(fileUrl); // Uncomment if you don't need the URL after redirect
+    }
+  });
+
   moreButton.addEventListener('click', async () => {
-    if (!hasMore) return;
+    if (!hasMore || isSearching) return;
 
     page++;
     try {
@@ -39,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
         displayTemplates(templates);
         hasMore = data.hasMore;
         if (!hasMore) {
-          moreButtonText.textContent = 'No More Templates'; // Update only the text
+          moreButtonText.textContent = 'No More Templates';
           moreButton.disabled = true;
         }
       } else {
@@ -59,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!query) {
       isSearching = false;
-      displayTemplates(templates); // Show all fetched templates if query is empty
+      displayTemplates(templates);
       return;
     }
 
@@ -75,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       const data = await response.json();
       if (data.success) {
-        displayTemplates(data.templates); // Display search results
+        displayTemplates(data.templates);
       } else {
         console.error('Failed to search templates:', data.error);
         templateGrid.innerHTML = '<p>Error searching templates</p>';
@@ -91,9 +115,10 @@ document.addEventListener('DOMContentLoaded', () => {
     templates = window.memeTemplates || [];
     page = 1;
     hasMore = true;
+    isSearching = false;
     templateGrid.innerHTML = '';
     displayTemplates(templates);
-    moreButtonText.textContent = 'More'; // Update only the <p> tag
+    moreButtonText.textContent = 'More';
     moreButton.disabled = false;
   });
 
@@ -109,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
       img.alt = template.name;
       img.className = 'template-img';
       img.addEventListener('click', () => {
-        window.location.href = `editor.html?template=${encodeURIComponent(template.url)}`;
+        window.location.href = `/memeify/api/editorPage?template=${encodeURIComponent(template.url)}`;
       });
       templateGrid.appendChild(img);
     });

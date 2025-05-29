@@ -97,5 +97,8 @@ const searchTemplates =  async (req, res) => {
     res.status(500).json({ success: false, error: 'Failed to search templates' });
   }
 };
+const editorPage = async(req,res) => {
+   res.sendFile(path.join(__dirname, '../../Client/editor.html'))
+};
 
-module.exports = { getHomepage, getMoretemplates, searchTemplates };
+module.exports = { getHomepage, getMoretemplates, searchTemplates, editorPage };
