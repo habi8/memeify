@@ -39,7 +39,7 @@
 /* Style the editor controls (stacked vertically on the right) */
 .editor-controls {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 10px;
   width: 200px;
 }
@@ -93,25 +93,27 @@
 .draggable-text {
   position: absolute;
   cursor: move;
-  user-select: none;
-  z-index: 5;
-  opacity: 0; /* Invisible, used for dragging */
+  border: 1px dashed #aaa;
+  background: transparent;
+  pointer-events: auto;
 }
+
 
 /* Style for delete button on the left */
 .delete-button {
   position: absolute;
-  left: -220px; /* Position to the left of the canvas */
-  top: 0;
-  padding: 5px 10px;
-  background-color: #e07a5f;
+  top: 300px;
+  left: 100px;
+  padding: 8px 12px;
+  background: red;
+  color: white;
   border: none;
   border-radius: 5px;
-  color: #fff;
-  font-size: 16px;
-  cursor: pointer;
+  font-weight: bold;
   z-index: 10;
+  cursor: pointer;
 }
+
 
 .delete-button:hover {
   background-color: #d65f4a;

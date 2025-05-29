@@ -1,4 +1,3 @@
-// Client/JS/editor.js
 document.addEventListener('DOMContentLoaded', () => {
   const canvas = document.getElementById('meme-canvas');
   const ctx = canvas.getContext('2d');
@@ -6,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const generateButton = document.getElementById('generate-meme');
   const editorContainer = document.querySelector('.editor-container');
 
-  // Parse URL parameters
   const urlParams = new URLSearchParams(window.location.search);
   const templateUrl = urlParams.get('template');
   const isLocal = urlParams.get('isLocal') === 'true';
@@ -14,9 +12,11 @@ document.addEventListener('DOMContentLoaded', () => {
   let img = new Image();
   img.crossOrigin = 'Anonymous';
 
-  // Array to store text objects
   let texts = [];
-  let selectedTextObj = null; // Track the selected text for deletion
+  let selectedTextObj = null;
+  let isDragging = false;
+  let dragOffsetX = 0;
+  let dragOffsetY = 0;
 
   img.onload = () => {
     canvas.width = img.width;
@@ -32,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   img.src = templateUrl;
 
-  // Add text on button click
   addTextButton.addEventListener('click', () => {
     const rect = canvas.getBoundingClientRect();
     const x = rect.width / 2;
@@ -54,9 +53,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.key === 'Enter') {
         const text = input.value.trim();
         if (text) {
-          const textObj = { x, y, size: 30, text };
+          const textObj = {
+            x: x * (canvas.width / rect.width),
+            y: y * (canvas.height / rect.height),
+            size: 30,
+            text
+          };
           texts.push(textObj);
-          createDraggableText(textObj);
           drawMeme();
         }
         input.remove();
@@ -64,73 +67,71 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  function createDraggableText(textObj) {
-    const textDiv = document.createElement('div');
-    textDiv.className = 'draggable-text';
-    textDiv.style.left = `${canvas.offsetLeft + textObj.x - 75}px`; // Center
-    textDiv.style.top = `${canvas.offsetTop + textObj.y - 15}px`;
-    textDiv.style.width = '150px';
-    textDiv.style.height = '30px';
-    textDiv.dataset.index = texts.indexOf(textObj);
+  canvas.addEventListener('mousedown', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
+    const mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
 
-    editorContainer.appendChild(textDiv);
+    for (let i = texts.length - 1; i >= 0; i--) {
+      const textObj = texts[i];
+      ctx.font = `bold ${textObj.size}px Arial`;
+      const width = ctx.measureText(textObj.text).width;
+      const height = textObj.size;
 
-    let isDragging = false;
-    let initialX;
-    let initialY;
-
-    textDiv.addEventListener('mousedown', (e) => {
-      initialX = e.clientX;
-      initialY = e.clientY;
-      isDragging = true;
-      selectedTextObj = textObj; // Select this text for deletion
-      toggleDeleteButton(true);
-    });
-
-    document.addEventListener('mousemove', (e) => {
-      if (isDragging) {
-        const rect = canvas.getBoundingClientRect();
-        const dx = e.clientX - initialX;
-        const dy = e.clientY - initialY;
-
-        // Update position relative to initial click
-        textObj.x += dx / rect.width * canvas.width; // Scale to canvas coordinates
-        textObj.y += dy / rect.height * canvas.height;
-
-        // Constrain within canvas bounds
-        textObj.x = Math.max(75, Math.min(textObj.x, canvas.width - 75));
-        textObj.y = Math.max(15, Math.min(textObj.y, canvas.height - 15));
-
-        textDiv.style.left = `${canvas.offsetLeft + textObj.x - 75}px`;
-        textDiv.style.top = `${canvas.offsetTop + textObj.y - 15}px`;
-        initialX = e.clientX; // Update initial position for smooth dragging
-        initialY = e.clientY;
-        drawMeme();
+      if (
+        mouseX >= textObj.x - width / 2 &&
+        mouseX <= textObj.x + width / 2 &&
+        mouseY >= textObj.y - height &&
+        mouseY <= textObj.y
+      ) {
+        selectedTextObj = textObj;
+        dragOffsetX = mouseX - textObj.x;
+        dragOffsetY = mouseY - textObj.y;
+        isDragging = true;
+        toggleDeleteButton(true);
+        break;
       }
-    });
+    }
+  });
 
-    document.addEventListener('mouseup', () => {
-      isDragging = false;
-    });
-  }
+  canvas.addEventListener('mousemove', (e) => {
+    if (!isDragging || !selectedTextObj) return;
 
-  // Create and toggle delete button on the left
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
+    const mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+    selectedTextObj.x = mouseX - dragOffsetX;
+    selectedTextObj.y = mouseY - dragOffsetY;
+
+    drawMeme();
+  });
+
+  canvas.addEventListener('mouseup', () => {
+    isDragging = false;
+  });
+
   function toggleDeleteButton(show) {
     let deleteBtn = document.querySelector('.delete-button');
+
     if (show && !deleteBtn) {
       deleteBtn = document.createElement('button');
       deleteBtn.className = 'delete-button';
       deleteBtn.innerHTML = 'Delete';
+
       deleteBtn.addEventListener('click', () => {
         if (selectedTextObj) {
-          texts = texts.filter(t => t !== selectedTextObj);
-          const textDiv = document.querySelector(`[data-index="${texts.indexOf(selectedTextObj)}"]`);
-          if (textDiv) textDiv.remove();
+          const index = texts.indexOf(selectedTextObj);
+          if (index !== -1) {
+            texts.splice(index, 1);
+            drawMeme();
+          }
+
           selectedTextObj = null;
-          deleteBtn.remove();
-          drawMeme();
+          toggleDeleteButton(false);
         }
       });
+
       editorContainer.appendChild(deleteBtn);
     } else if (!show && deleteBtn) {
       deleteBtn.remove();
@@ -161,7 +162,6 @@ document.addEventListener('DOMContentLoaded', () => {
     link.click();
   });
 
-  // Clean up blob URL if it's a local file
   if (isLocal) {
     window.addEventListener('unload', () => {
       URL.revokeObjectURL(templateUrl);
