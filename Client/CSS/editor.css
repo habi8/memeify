@@ -1,0 +1,80 @@
+/* Client/CSS/editor.css */
+
+/* Style for the header image (top left positioning) */
+.memify-header {
+  position: relative;
+  height: 100px;
+  top: -50px;
+  left: 10px;
+  margin-bottom: 20px;
+  padding: 10px;
+  
+}
+
+.memify-header:hover{
+    cursor: pointer;
+}
+
+.memify-header img {
+  max-width: 180px; /* Reduce image size to a reasonable limit */
+  height: auto; /* Maintain aspect ratio */
+  display: block; /* Ensure it behaves as a block element */
+}
+
+/* Center the editor container and align its children */
+.editor-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 20px;
+  min-height: calc(100vh - 100px); /* Adjusted for header height */
+  position: relative;
+  margin-top: 60px; /* Space below the header (adjust based on header height) */
+}
+
+/* Style the canvas (meme image) */
+#meme-canvas {
+  max-width: 500px;
+  max-height: 500px;
+  width: auto;
+  height: auto;
+  border: 1px solid #ccc;
+}
+
+/* Style the editor controls (stacked vertically on the right) */
+.editor-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 200px;
+}
+
+/* Style the generate meme button */
+#generate-meme {
+  padding: 10px;
+  background-color: #f4a261;
+  border: none;
+  border-radius: 5px;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#generate-meme:hover {
+  background-color: #e07a5f;
+}
+
+/* Style for dynamically created text inputs */
+.dynamic-text-input {
+  padding: 5px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.dynamic-text-input:focus {
+  border-color: #f4a261;
+}
