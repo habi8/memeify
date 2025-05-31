@@ -1,19 +1,40 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@font-face {
+  font-family: 'BubblegumSans';
+  src: url('/Fonts/BubblegumSans-Regular.ttf') format('truetype');
+}
+
+
+
+body {
+  font-family: sans-serif;
+  background-color: #f5f5f5;
+  color: #333;
+}
+.memify-header {
+  position: relative;
+  height: 120px;
+  margin-bottom: 40px;
+  padding: 20px;
+  
+  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
+}
+
+.memify-header img {
+  position: absolute;
+  top: -40px;
+  left: 30px;
+  width: 180px; /* Adjust based on your logo size */
+  height: auto;
+}
 /* Client/CSS/editor.css */
 
 /* Style for the header image (top left positioning) */
-.memify-header {
-  position: absolute;
-  top: 0;
-  left: 0;
-  padding: 10px;
-  z-index: 10;
-}
-
-.memify-header .logo {
-  max-width: 150px;
-  height: auto;
-  display: block;
-}
 
 /* Center the editor container and align its children */
 .editor-container {
@@ -21,16 +42,17 @@
   justify-content: center;
   align-items: flex-start;
   gap: 20px;
-  padding: 20px;
   min-height: calc(100vh - 100px);
   position: relative;
-  margin-top: 60px;
+  margin-top: 40px;
 }
 
 /* Style the canvas (meme image) */
 #meme-canvas {
   max-width: 500px;
   max-height: 500px;
+  
+  margin-left: 250px;
   width: auto;
   height: auto;
   border: 1px solid #ccc;
@@ -39,7 +61,7 @@
 /* Style the editor controls (stacked vertically on the right) */
 .editor-controls {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 10px;
   width: 200px;
 }
@@ -47,7 +69,7 @@
 /* Style the add text button */
 #add-text {
   padding: 10px;
-  background-color: #f4a261;
+  background-color: orange;
   border: none;
   border-radius: 5px;
   color: #fff;
@@ -56,22 +78,23 @@
 }
 
 #add-text:hover {
-  background-color: #e07a5f;
+  background-color:orangered;
 }
 
 /* Style the generate meme button */
 #generate-meme {
   padding: 10px;
-  background-color: #f4a261;
+  background-color: skyblue;
   border: none;
   border-radius: 5px;
-  color: #fff;
+  color: black;
   font-size: 16px;
   cursor: pointer;
 }
 
 #generate-meme:hover {
-  background-color: #e07a5f;
+  background-color: cyan;
+  transform: scale(1.05);
 }
 
 /* Style for text input during editing */
@@ -88,42 +111,32 @@
 .text-input:focus {
   border-color: #f4a261;
 }
-
-/* Style for draggable text */
-.draggable-text {
+/* Container for selected text controls */
+.text-controls {
   position: absolute;
-  cursor: move;
-  border: 1px dashed #aaa;
-  background: transparent;
-  pointer-events: auto;
+  top: 80px;
+  right: 410px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  z-index: 100;
 }
 
-
-/* Style for delete button on the left */
-/* .delete-button {
-  position: absolute;
-  top: 300px;
-  left: 100px;
-  padding: 8px 12px;
-  background: red;
-  color: white;
+.text-controls button {
+  padding: 6px 12px;
+  background-color: orange;
   border: none;
   border-radius: 5px;
-  font-weight: bold;
-  z-index: 10;
-  cursor: pointer;
-} */
-
-.delete-button,
-.increase-button,
-.decrease-button {
-  padding: 5px 10px;
-  margin-top: 10px;
-  font-size: 16px;
+  color: white;
+  font-size: 14px;
   cursor: pointer;
 }
 
-
-.delete-button:hover {
-  background-color: #d65f4a;
+.text-controls button:hover {
+  background-color: orangered;
 }

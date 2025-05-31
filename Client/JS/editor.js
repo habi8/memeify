@@ -57,6 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
             x: x * (canvas.width / rect.width),
             y: y * (canvas.height / rect.height),
             size: 30,
+            rotation: 0,
             text
           };
           texts.push(textObj);
@@ -72,11 +73,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
     const mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
 
+    selectedTextObj = null;
     for (let i = texts.length - 1; i >= 0; i--) {
       const textObj = texts[i];
+      ctx.save();
+      ctx.translate(textObj.x, textObj.y);
+      ctx.rotate((textObj.rotation * Math.PI) / 180);
       ctx.font = `bold ${textObj.size}px Arial`;
       const width = ctx.measureText(textObj.text).width;
       const height = textObj.size;
+      ctx.restore();
+
+      const dx = mouseX - textObj.x;
+      const dy = mouseY - textObj.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
 
       if (
         mouseX >= textObj.x - width / 2 &&
@@ -85,13 +95,15 @@ document.addEventListener('DOMContentLoaded', () => {
         mouseY <= textObj.y
       ) {
         selectedTextObj = textObj;
-        dragOffsetX = mouseX - textObj.x;
-        dragOffsetY = mouseY - textObj.y;
+        dragOffsetX = dx;
+        dragOffsetY = dy;
         isDragging = true;
-        toggleDeleteButton(true);
-        break;
+        toggleControls(true);
+        return;
       }
     }
+
+    toggleControls(false);
   });
 
   canvas.addEventListener('mousemove', (e) => {
@@ -111,61 +123,52 @@ document.addEventListener('DOMContentLoaded', () => {
     isDragging = false;
   });
 
-  function toggleDeleteButton(show) {
-  let deleteBtn = document.querySelector('.delete-button');
-  let increaseBtn = document.querySelector('.increase-button');
-  let decreaseBtn = document.querySelector('.decrease-button');
+  function toggleControls(show) {
+  // Remove existing control panel
+  const existing = document.querySelector('.text-controls');
+  if (existing) existing.remove();
 
-  if (show && !deleteBtn) {
-    
-    deleteBtn = document.createElement('button');
-    deleteBtn.className = 'delete-button';
-    deleteBtn.innerHTML = 'Delete';
-    editorContainer.appendChild(deleteBtn);
+  if (show && selectedTextObj) {
+    const panel = document.createElement('div');
+    panel.className = 'text-controls';
 
-    
-    increaseBtn = document.createElement('button');
-    increaseBtn.className = 'increase-button';
-    increaseBtn.innerHTML = '+';
-    increaseBtn.style.marginLeft = '10px';
-    editorContainer.appendChild(increaseBtn);
+    const createButton = (label, onClick) => {
+      const btn = document.createElement('button');
+      btn.textContent = label;
+      btn.addEventListener('click', onClick);
+      return btn;
+    };
 
-    
-    decreaseBtn = document.createElement('button');
-    decreaseBtn.className = 'decrease-button';
-    decreaseBtn.innerHTML = '−';
-    decreaseBtn.style.marginLeft = '5px';
-    editorContainer.appendChild(decreaseBtn);
+    panel.appendChild(createButton('Delete', () => {
+      texts = texts.filter(t => t !== selectedTextObj);
+      selectedTextObj = null;
+      drawMeme();
+      toggleControls(false);
+    }));
 
-    deleteBtn.addEventListener('click', () => {
-      if (selectedTextObj) {
-        const index = texts.indexOf(selectedTextObj);
-        if (index !== -1) {
-          texts.splice(index, 1);
-          drawMeme();
-        }
-        selectedTextObj = null;
-        toggleDeleteButton(false);
-      }
-    });
+    panel.appendChild(createButton('Size+', () => {
+      selectedTextObj.size += 2;
+      drawMeme();
+    }));
 
-    increaseBtn.addEventListener('click', () => {
-      if (selectedTextObj) {
-        selectedTextObj.size += 2;
-        drawMeme();
-      }
-    });
-
-    decreaseBtn.addEventListener('click', () => {
-      if (selectedTextObj && selectedTextObj.size > 10) {
+    panel.appendChild(createButton('Size-', () => {
+      if (selectedTextObj.size > 10) {
         selectedTextObj.size -= 2;
         drawMeme();
       }
-    });
-  } else if (!show && deleteBtn) {
-    deleteBtn.remove();
-    if (increaseBtn) increaseBtn.remove();
-    if (decreaseBtn) decreaseBtn.remove();
+    }));
+
+    panel.appendChild(createButton('⟲', () => {
+      selectedTextObj.rotation -= 5;
+      drawMeme();
+    }));
+
+    panel.appendChild(createButton('⟳', () => {
+      selectedTextObj.rotation += 5;
+      drawMeme();
+    }));
+
+    editorContainer.appendChild(panel);
   }
 }
 
@@ -173,15 +176,19 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(img, 0, 0);
 
-    ctx.fillStyle = 'white';
-    ctx.strokeStyle = 'black';
-    ctx.lineWidth = 2;
-    ctx.textAlign = 'center';
-
-    texts.forEach(({ x, y, size, text }) => {
+    texts.forEach(({ x, y, size, text, rotation }) => {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate((rotation * Math.PI) / 180);
       ctx.font = `bold ${size}px Arial`;
-      ctx.fillText(text, x, y);
-      ctx.strokeText(text, x, y);
+      ctx.fillStyle = 'white';
+      ctx.strokeStyle = 'black';
+      ctx.lineWidth = 2;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, 0, 0);
+      ctx.strokeText(text, 0, 0);
+      ctx.restore();
     });
   }
 
@@ -199,5 +206,3 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
-
-

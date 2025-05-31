@@ -15,6 +15,7 @@ body {
   font-family: sans-serif;
   background-color: #f5f5f5;
   color: #333;
+  
 }
 
 .memify-header {
@@ -118,23 +119,24 @@ body {
   opacity: 1;
 }
 
-.popular-templates{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 30px;
-    margin-left: 160px;
-    height: 40px;
-    width: 1160px;
-    
-    background-color: rgb(255, 227, 175);
+.popular-templates {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0px;
+  margin-left: 285px;
+  margin-right: 285px;
+  height: 40px;
+  width: auto;
+  background-color: rgb(255, 227, 175);
 }
 /* Template grid */
 .template-grid {
   display: grid;
+  justify-content: center;
   grid-template-columns: repeat(5, 1fr); /* 5 columns */
   gap: 20px;
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 20px auto;
   padding: 0 20px;
 }
