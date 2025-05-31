@@ -85,11 +85,18 @@ body {
 #generate-meme {
   padding: 10px;
   background-color: skyblue;
+  display: flex;
+  align-items: center;
   border: none;
   border-radius: 5px;
   color: black;
   font-size: 16px;
   cursor: pointer;
+}
+
+#generate-meme img{
+  width: 30px;
+  height: auto;
 }
 
 #generate-meme:hover {
