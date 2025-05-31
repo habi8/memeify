@@ -40,11 +40,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const input = document.createElement('input');
     input.type = 'text';
     input.className = 'text-input';
-    input.style.position = 'absolute';
     input.style.left = `${rect.left + x - 75}px`;
     input.style.top = `${rect.top + y - 20}px`;
     input.style.width = '150px';
-    input.style.fontWeight = 'bold';
 
     editorContainer.appendChild(input);
     input.focus();
@@ -58,7 +56,9 @@ document.addEventListener('DOMContentLoaded', () => {
             y: y * (canvas.height / rect.height),
             size: 30,
             rotation: 0,
-            text
+            text,
+            color: '#ffffff',
+            font: 'Arial'
           };
           texts.push(textObj);
           drawMeme();
@@ -79,14 +79,10 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.save();
       ctx.translate(textObj.x, textObj.y);
       ctx.rotate((textObj.rotation * Math.PI) / 180);
-      ctx.font = `bold ${textObj.size}px Arial`;
+      ctx.font = `bold ${textObj.size}px ${textObj.font}`;
       const width = ctx.measureText(textObj.text).width;
       const height = textObj.size;
       ctx.restore();
-
-      const dx = mouseX - textObj.x;
-      const dy = mouseY - textObj.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
 
       if (
         mouseX >= textObj.x - width / 2 &&
@@ -95,8 +91,8 @@ document.addEventListener('DOMContentLoaded', () => {
         mouseY <= textObj.y
       ) {
         selectedTextObj = textObj;
-        dragOffsetX = dx;
-        dragOffsetY = dy;
+        dragOffsetX = mouseX - textObj.x;
+        dragOffsetY = mouseY - textObj.y;
         isDragging = true;
         toggleControls(true);
         return;
@@ -124,64 +120,100 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function toggleControls(show) {
-  // Remove existing control panel
-  const existing = document.querySelector('.text-controls');
-  if (existing) existing.remove();
+    const existing = document.querySelector('.text-controls');
+    if (existing) existing.remove();
 
-  if (show && selectedTextObj) {
-    const panel = document.createElement('div');
-    panel.className = 'text-controls';
+    if (show && selectedTextObj) {
+      const panel = document.createElement('div');
+      panel.className = 'text-controls';
 
-    const createButton = (label, onClick) => {
-      const btn = document.createElement('button');
-      btn.textContent = label;
-      btn.addEventListener('click', onClick);
-      return btn;
-    };
+      const createButton = (label, onClick) => {
+        const btn = document.createElement('button');
+        btn.textContent = label;
+        btn.addEventListener('click', onClick);
+        return btn;
+      };
 
-    panel.appendChild(createButton('Delete', () => {
-      texts = texts.filter(t => t !== selectedTextObj);
-      selectedTextObj = null;
-      drawMeme();
-      toggleControls(false);
-    }));
-
-    panel.appendChild(createButton('Size+', () => {
-      selectedTextObj.size += 2;
-      drawMeme();
-    }));
-
-    panel.appendChild(createButton('Size-', () => {
-      if (selectedTextObj.size > 10) {
-        selectedTextObj.size -= 2;
+      // Control Buttons
+      panel.appendChild(createButton('Delete', () => {
+        texts = texts.filter(t => t !== selectedTextObj);
+        selectedTextObj = null;
         drawMeme();
-      }
-    }));
+        toggleControls(false);
+      }));
 
-    panel.appendChild(createButton('⟲', () => {
-      selectedTextObj.rotation -= 5;
-      drawMeme();
-    }));
+      panel.appendChild(createButton('Size+', () => {
+        selectedTextObj.size += 2;
+        drawMeme();
+      }));
 
-    panel.appendChild(createButton('⟳', () => {
-      selectedTextObj.rotation += 5;
-      drawMeme();
-    }));
+      panel.appendChild(createButton('Size-', () => {
+        if (selectedTextObj.size > 10) {
+          selectedTextObj.size -= 2;
+          drawMeme();
+        }
+      }));
 
-    editorContainer.appendChild(panel);
+      panel.appendChild(createButton('⟲', () => {
+        selectedTextObj.rotation -= 5;
+        drawMeme();
+      }));
+
+      panel.appendChild(createButton('⟳', () => {
+        selectedTextObj.rotation += 5;
+        drawMeme();
+      }));
+
+      // Color Picker
+      const colorLabel = document.createElement('label');
+      colorLabel.textContent = 'Color: ';
+      const colorPicker = document.createElement('input');
+      colorPicker.type = 'color';
+      colorPicker.value = selectedTextObj.color || '#ffffff';
+      colorPicker.addEventListener('input', (e) => {
+        selectedTextObj.color = e.target.value;
+        drawMeme();
+      });
+      colorLabel.appendChild(colorPicker);
+      panel.appendChild(colorLabel);
+
+      // Font Selector
+      const fontLabel = document.createElement('label');
+      fontLabel.textContent = ' Font: ';
+      const fontSelect = document.createElement('select');
+
+      ['Arial', 'Comic Sans MS', 'Courier New', 'Georgia', 'Impact', 'Tahoma', 'Times New Roman', 'Verdana'].forEach(font => {
+        const option = document.createElement('option');
+        option.value = font;
+        option.textContent = font;
+        if (selectedTextObj.font === font) {
+          option.selected = true;
+        }
+        fontSelect.appendChild(option);
+      });
+
+      fontSelect.addEventListener('change', (e) => {
+        selectedTextObj.font = e.target.value;
+        drawMeme();
+      });
+
+      fontLabel.appendChild(fontSelect);
+      panel.appendChild(fontLabel);
+
+      editorContainer.appendChild(panel);
+    }
   }
-}
 
   function drawMeme() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(img, 0, 0);
 
-    texts.forEach(({ x, y, size, text, rotation }) => {
+    texts.forEach(({ x, y, size, text, rotation, color, font }) => {
       ctx.save();
       ctx.translate(x, y);
       ctx.rotate((rotation * Math.PI) / 180);
-      ctx.font = `bold ${size}px Arial`;
-      ctx.fillStyle = 'white';
+      ctx.font = `bold ${size}px ${font}`;
+      ctx.fillStyle = color;
       ctx.strokeStyle = 'black';
       ctx.lineWidth = 2;
       ctx.textAlign = 'center';

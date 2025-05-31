@@ -114,8 +114,8 @@ body {
 /* Container for selected text controls */
 .text-controls {
   position: absolute;
-  top: 80px;
-  right: 410px;
+  top: 60px;
+  right: 315px;
   display: flex;
   flex-direction: column;
   justify-content: center;
